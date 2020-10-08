@@ -31,10 +31,7 @@ class FullyConnectedNN:
                                  kernel_initializer="glorot_normal"))
 
         self.model.add(Dense(1, use_bias=False, kernel_initializer="glorot_normal"))
-        """
-        self.model.add(Dense(MnistData.num_of_digits, activation="softmax", use_bias=False,
-                             kernel_initializer="glorot_normal"))
-        """
+
         # compile:
         self.model.compile(optimizer='adam', loss='mse', metrics=["accuracy"])
 
@@ -78,10 +75,6 @@ class MnistData:
         # 5. changing labels: if digit is even - the label becomes -1, if digit is odd - the label becomes 1:
         self.y_train = np.array([0 if digit % 2 == 0 else 1 for digit in self.y_train])
         self.y_test = np.array([0 if digit % 2 == 0 else 1 for digit in self.y_test])
-        """
-        self.y_train = tf.keras.utils.to_categorical(self.y_train, MnistData.num_of_digits)
-        self.y_test = tf.keras.utils.to_categorical(self.y_test, MnistData.num_of_digits)
-        """
 
 
 class AdversarialGenerator:
@@ -130,7 +123,7 @@ class AdversarialGenerator:
 
 
 mnist_data = MnistData()
-num_of_iterations = 50
+num_of_iterations = 1000
 indices_array = np.random.choice(len(mnist_data.x_test), num_of_iterations)
 num_of_layers_array = [2, 4, 8, 16]
 # num_of_layers_array = [8]
@@ -151,13 +144,3 @@ for layer_num in num_of_layers_array:
     average = sum_of_distances / num_of_iterations
     print("Average of distances between image and perturbation among " + str(num_of_iterations) +
           " testing images is: ", average)
-
-"""
-print("prediction: ", network1.predict(mnist_data.x_train[0].reshape(1, 784)))
-adversarial_gen = AdversarialGenerator(network1)
-# im2 = adversarial_gen.create_perturbed_image(mnist_data.x_train[0].reshape(1, 784))
-perturbed_image1, prediction1 = adversarial_gen.iterate_gd_until_label_change(mnist_data.x_train[0].reshape(1, 784))
-print("prediction of perturbed image: ", prediction1)
-print("distance between image and perturbed image: ",
-      np.linalg.norm(mnist_data.x_train[0].reshape(1, 784) - perturbed_image1))
-"""
