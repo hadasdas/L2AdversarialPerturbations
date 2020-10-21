@@ -7,6 +7,10 @@ import matplotlib.pyplot as plt
 
 
 class FullyConnectedNN:
+    """
+    Class implementing a fully connected neural network of varying depth, with relu activation that learns to distinguish
+    between even and odd numbers using tensorflow's Mnist data set.
+    """
     def __init__(self, num_of_layers, data, batch_size=128, epochs=5, num_of_input_nodes=784):
         self.num_of_layers = num_of_layers
         self.num_of_input_nodes = num_of_input_nodes
@@ -48,6 +52,9 @@ class FullyConnectedNN:
 
 
 class MnistData:
+    """
+    Class implementing processed data from tensorflow's Mnist data set, with binary labels of even and odd:
+    """
     num_of_features = 784
 
     def __init__(self):
@@ -77,6 +84,9 @@ class MnistData:
 
 
 class AdversarialGenerator:
+    """
+    A class that gets the trained neural network and finds an adversarial example using GD with small steps
+    """
     def __init__(self, neural_network):
         self.network = neural_network
 
@@ -143,8 +153,7 @@ for layer_num in range(2, 9):
     print("Maximal distance was: ", max(distance_list))
     n, bins, patches = plt.hist(x=distance_list, bins='auto', color='#0504aa', alpha=0.7, rwidth=0.85)
     plt.grid(axis='y', alpha=0.75)
-    # str_x_label = 'Distance from example. Average: ' + str(average) + '. \nMaximal distance: '
-    # + str(max(distance_list))
+
     plt.xlabel('Distance. num of layers ' + str(layer_num) + '. Average: ' + str(average))
     plt.ylabel('Frequency')
     plt.show()
