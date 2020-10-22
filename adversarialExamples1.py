@@ -128,32 +128,35 @@ class AdversarialGenerator:
             return False
 
 
-mnist_data = MnistData()
-num_of_iterations = 1000
-indices_array = np.random.choice(len(mnist_data.x_test), num_of_iterations)
-for layer_num in range(2, 9):
-    network1 = FullyConnectedNN(layer_num, mnist_data)
-    network1.fit_model()
-    network1.print_accuracy()
-    distance_list = np.empty(num_of_iterations)
-    i = 0
-    for index in indices_array:
-        adversarial_gen = AdversarialGenerator(network1)
-        perturbed_image1, prediction1 = adversarial_gen.iterate_gd_until_label_change(
-            mnist_data.x_test[index].reshape(1, MnistData.num_of_features))
-        current_dist = np.linalg.norm(mnist_data.x_test[index].reshape(1, MnistData.num_of_features) - perturbed_image1)
-        distance_list[i] = current_dist
-        i += 1
+def run_all():
+    mnist_data = MnistData()
+    num_of_iterations = 1000
+    indices_array = np.random.choice(len(mnist_data.x_test), num_of_iterations)
+    for layer_num in range(2, 9):
+        network1 = FullyConnectedNN(layer_num, mnist_data)
+        network1.fit_model()
+        network1.print_accuracy()
+        distance_list = np.empty(num_of_iterations)
 
-        print("distance of iteration ", i, " is: ", current_dist)
+        for i, random_index in enumerate(indices_array):
+            adversarial_gen = AdversarialGenerator(network1)
+            perturbed_image1, prediction1 = adversarial_gen.iterate_gd_until_label_change(
+                mnist_data.x_test[random_index].reshape(1, MnistData.num_of_features))
+            current_dist = np.linalg.norm(mnist_data.x_test[random_index].reshape(1, MnistData.num_of_features) - perturbed_image1)
+            distance_list[i] = current_dist
 
-    average = sum(distance_list) / num_of_iterations
-    print("Average of distances between image and perturbation among " + str(num_of_iterations) +
-          " testing images is: ", average)
-    print("Maximal distance was: ", max(distance_list))
-    n, bins, patches = plt.hist(x=distance_list, bins='auto', color='#0504aa', alpha=0.7, rwidth=0.85)
-    plt.grid(axis='y', alpha=0.75)
+            print("distance of iteration ", i, " is: ", current_dist)
 
-    plt.xlabel('Distance. num of layers ' + str(layer_num) + '. Average: ' + str(average))
-    plt.ylabel('Frequency')
-    plt.show()
+        average = sum(distance_list) / num_of_iterations
+        print("Average of distances between image and perturbation among " + str(num_of_iterations) +
+              " testing images is: ", average)
+        print("Maximal distance was: ", max(distance_list))
+        n, bins, patches = plt.hist(x=distance_list, bins='auto', color='#0504aa', alpha=0.7, rwidth=0.85)
+        plt.grid(axis='y', alpha=0.75)
+
+        plt.xlabel('Distance. num of layers ' + str(layer_num) + '. Average: ' + str(average))
+        plt.ylabel('Frequency')
+        plt.show()
+
+
+run_all()
